@@ -1,0 +1,11 @@
+{
+  "name": "chair-problem",
+  "version": "1.0.0",
+  "description": "Solution to the chair problem using Reactjs.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "George Michael",
+  "license": "ISC"
+}
