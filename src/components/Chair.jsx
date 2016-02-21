@@ -1,22 +1,25 @@
 var React = require('react');
 
-var Chair = React.createClass({
-	componentDidMount: function() {
-  	console.log('mount chair: ', this.props.chairPosCoord);
-    console.log(ReactDOM.findDOMNode(this));
-  },
-  render: function() {
-  	var coords = this.props.chairPosCoord.split(',');
-  	var style = {
-      top: coords[1],
-      right: coords[0]
-    };
-    console.log(coords);
-    return <div style={style} className="chair" onMouseEnter={this.hovered}>{this.props.name}</div>;
-  },
-  hovered: function(){
-  	console.log('hovered')
-  }
-});
+class Chair extends React.Component {
+
+	constructor(props) {
+
+        super(props);
+    }
+
+	componentDidMount() {}
+
+	render() {
+		var coords = this.props.chairPosCoord.split(',');
+		var style = {
+			top: coords[1],
+			right: coords[0]
+		};
+
+		return (
+			<div className="chair" data-chair-number={this.props.chairNum} style={style}>{this.props.name}</div>
+		)
+	}
+};
 
 module.exports = Chair;

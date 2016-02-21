@@ -48,8 +48,10 @@
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var Viewport = __webpack_require__(161);
-	var config = __webpack_require__(163);
+	var Viewport = __webpack_require__(159);
+	var config = __webpack_require__(164);
+
+	__webpack_require__(165);
 
 	ReactDOM.render(React.createElement(Viewport, { config: config }), document.getElementById('App'));
 
@@ -19655,9 +19657,7 @@
 
 
 /***/ },
-/* 159 */,
-/* 160 */,
-/* 161 */
+/* 159 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19671,8 +19671,8 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var React = __webpack_require__(1);
-	var Settings = __webpack_require__(162);
-	var Room = __webpack_require__(165);
+	var Settings = __webpack_require__(160);
+	var Room = __webpack_require__(161);
 
 	var Viewport = function (_React$Component) {
 	    _inherits(Viewport, _React$Component);
@@ -19680,24 +19680,43 @@
 	    function Viewport() {
 	        _classCallCheck(this, Viewport);
 
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Viewport).call(this));
-	        //this.state = {count: props.initialCount};
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Viewport).call(this));
+
+	        _this.state = {
+	            isFiringCommenced: false
+	        };
+	        return _this;
 	    }
 
 	    _createClass(Viewport, [{
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
-	            console.log(this.props.config);
+	            //console.log('Viewport: ', this.props);//this.props.config);
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var self = this;
 	            return React.createElement(
 	                'div',
 	                { className: 'viewport' },
-	                React.createElement(Settings, null),
-	                React.createElement(Room, null)
+	                React.createElement(Settings, { config: this.props.config, onBegin: this._settingsBegin.bind(this) }),
+	                function () {
+	                    if (self.state.isFiringCommenced) {
+
+	                        // TODO: Need to pass in the settings from the Settings panel and not the config.
+	                        return React.createElement(Room, { config: self.props.config });
+	                    }
+	                }()
 	            );
+	        }
+	    }, {
+	        key: '_settingsBegin',
+	        value: function _settingsBegin() {
+	            console.log('_settingsBegin');
+	            this.setState({
+	                isFiringCommenced: true
+	            });
 	        }
 	    }]);
 
@@ -19709,7 +19728,7 @@
 	module.exports = Viewport;
 
 /***/ },
-/* 162 */
+/* 160 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19723,22 +19742,26 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var React = __webpack_require__(1);
-	var ArrayHelper = __webpack_require__(164);
+	var ArrayHelper = __webpack_require__(169);
 
 	var Settings = function (_React$Component) {
 		_inherits(Settings, _React$Component);
 
-		function Settings() {
+		function Settings(props) {
 			_classCallCheck(this, Settings);
 
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(Settings).call(this));
-			//this.state = {count: props.initialCount};
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Settings).call(this, props));
+
+			_this.state = {
+				saved: false
+			};
+			return _this;
 		}
 
 		_createClass(Settings, [{
 			key: 'componentDidMount',
 			value: function componentDidMount() {
-				console.log('SettingsPanel');
+				//console.log(this);
 			}
 		}, {
 			key: 'render',
@@ -19757,7 +19780,8 @@
 								type: 'text',
 								id: 'noOfChairsInput',
 								className: 'setting setting--no-of-chairs',
-								onChange: this._handleNoOfChairsChange })
+								defaultValue: this.props.config.numberOfChairs,
+								onChange: this._handleNoOfChairsChange.bind(this) })
 						),
 						React.createElement(
 							'div',
@@ -19788,52 +19812,77 @@
 						{ className: 'setting-wrapper' },
 						React.createElement(
 							'label',
-							{ htmlFor: 'firingPatternInput' },
-							'What firing pattern? Choose up to 10 characters, 1 for firing, 0 for skipping.',
+							{ htmlFor: 'firingIntervalInput' },
+							'Firing interval interval (ms)?',
 							React.createElement('input', {
 								type: 'text',
-								id: 'firingPatternInput',
-								className: 'setting setting--firing-pattern',
-								onChange: this._handlePatternChange })
+								id: 'firingInterval',
+								className: 'setting setting--firing-interval',
+								defaultValue: this.props.config.firingInterval,
+								onChange: this._handleFiringIntervalChange.bind(this) })
+						),
+						React.createElement(
+							'div',
+							{ className: 'setting-error-message gl-hide' },
+							'Please only enter only numbers.'
 						)
 					),
 					React.createElement(
 						'button',
-						{ onClick: this._handleSetUp },
+						{ onClick: this._handleSetUp.bind(this) },
 						'Begin'
 					)
 				);
 			}
-		}, {
-			key: '_handlePatternChange',
-			value: function _handlePatternChange(e) {
-				var val = e.target.value;
-				//debugger;
-				if (val.length > 10) {
-					e.target.value = ArrayHelper.spliceArray(val, -1, 1).join('');
-				}
 
-				if (val.match(/^[01]*$/) != void 0) {
-					console.log(val);
-				} else {
-					e.target.value = ArrayHelper.spliceArray(val, -1, 1).join('');
-				}
-			}
+			// _handlePatternChange(e) {
+			// 	var val = e.target.value;
+			// 	//debugger;
+			// 	if (val.length > 10){
+			// 		e.target.value = ArrayHelper.spliceArray(val, -1, 1).join('');
+			// 	}
+			//
+			// 	if (val.match(/^[01]*$/) != void 0) {
+			// 		console.log(val);
+			// 		this.setState(val);
+			// 	}
+			// 	else {
+			// 		e.target.value = ArrayHelper.spliceArray(val, -1, 1).join('');
+			// 	}
+			// }
+
 		}, {
 			key: '_handleNoOfChairsChange',
 			value: function _handleNoOfChairsChange(e) {
 				var val = e.target.value;
 				if (val.match(/^[0-9]*$/) != void 0) {
 
-					if (val < 10) {} else {}
+					if (val < 10) {
+						this.setState(val);
+					} else {}
 
 					console.log(val);
 				}
 			}
 		}, {
+			key: '_handleFiringIntervalChange',
+			value: function _handleFiringIntervalChange(e) {
+
+				var val = e.target.value;
+
+				if (val.match(/^[0-9]*$/) != void 0) {
+					console.log(val);
+
+					this.setState({
+						value: val
+					});
+				}
+			}
+		}, {
 			key: '_handleSetUp',
-			value: function _handleSetUp() {
-				console.log('_handleSetUp');
+			value: function _handleSetUp(e) {
+				//console.log('_handleSetUp: ', e);
+				this.props.onBegin();
 			}
 		}]);
 
@@ -19845,34 +19894,162 @@
 	module.exports = Settings;
 
 /***/ },
-/* 163 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	module.exports = {
-
-	    numberOfChairs: 10
-
-	};
-
-/***/ },
-/* 164 */
-/***/ function(module, exports) {
+/* 161 */
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = {
-	    spliceArray: function spliceArray(arr, index, number) {
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	        var arrOfVals = typeof arr === 'string' ? arr.split('') : arr;
-	        arrOfVals.splice(index, number);
-	        return arrOfVals;
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Chair = __webpack_require__(162);
+	var WallOfShame = __webpack_require__(163);
+
+	var Room = function (_Component) {
+	    _inherits(Room, _Component);
+
+	    function Room(props) {
+	        _classCallCheck(this, Room);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Room).call(this, props));
+
+	        _this.state = {
+	            numberOfChairs: _this.props.config.numberOfChairs,
+	            chairs: [],
+	            skipPattern: 1,
+	            fireLog: []
+	        };
+	        return _this;
 	    }
-	};
+
+	    _createClass(Room, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+
+	            setTimeout(function () {
+	                this.beginFiring();
+	            }.bind(this), 1000);
+	        }
+	    }, {
+	        key: 'generateChairItems',
+	        value: function generateChairItems() {
+
+	            //If chairs havent already been initialised, create them
+	            if (!this.state.chairs.length) {
+
+	                var arr = [];
+	                var noOfItems = this.state.numberOfChairs;
+
+	                for (var i = 0, len = this.state.numberOfChairs; i < len; i++) {
+	                    arr[i] = _react2.default.createElement(Chair, { key: i + 1, chairNum: i + 1, chairPosCoord: this.determineChairPosition(i + 1), isFired: false });
+	                }
+
+	                this.state.chairs = arr;
+	            } else {
+
+	                this.state.chairs = this.state.chairs.map(function (item, index) {
+
+	                    return _react2.default.cloneElement(item, {
+	                        chairPosCoord: this.determineChairPosition(index + 1)
+	                    });
+	                }, this);
+	            }
+
+	            return this.state.chairs;
+	        }
+	    }, {
+	        key: 'beginFiring',
+	        value: function beginFiring() {
+
+	            var currentIndexToFire = 0;
+	            var chairsArr = this.state.chairs;
+	            var skipPattern = this.state.skipPattern;
+	            var fireLog = this.state.fireLog;
+
+	            var firingTimeout = function () {
+
+	                if (chairsArr.length == 1) {
+	                    clearInterval(firingTimeout);
+	                    return;
+	                }
+
+	                if (currentIndexToFire > chairsArr.length) {
+	                    currentIndexToFire = currentIndexToFire % chairsArr.length;
+	                }
+
+	                var firedChair = chairsArr.splice(currentIndexToFire, 1);
+	                // debugger;
+	                console.log('Firing: #', firedChair[0].key);
+
+	                fireLog.push('Firing chair: #' + firedChair[0].key);
+
+	                currentIndexToFire += skipPattern;
+	                skipPattern++;
+
+	                this.setState({
+	                    numberOfChairs: chairsArr.length,
+	                    chairs: chairsArr,
+	                    fireLog: fireLog
+	                });
+	            }.bind(this);
+
+	            setInterval(firingTimeout, this.props.config.firingInterval);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'room' },
+	                    this.generateChairItems()
+	                ),
+	                _react2.default.createElement(WallOfShame, { fireLog: this.state.fireLog })
+	            );
+	        }
+
+	        //<input type="button" class="" value="Stop" onClick={this._handleOnStop} />
+	        // _handleOnStop(){
+	        //     clearInterval();
+	        // }
+
+	    }, {
+	        key: 'determineChairPosition',
+	        value: function determineChairPosition(chairIndex) {
+	            // http://stackoverflow.com/questions/10152390/dynamically-arrange-some-elements-around-a-circle
+	            // (x + r cos(2kπ/n), y + r sin(2kπ/n))
+	            // x = x origin
+	            // y = y origin
+	            // r = radius/distance
+	            //debugger;
+	            var x = 245 + Math.floor(245 * Math.cos(2 * Math.PI * chairIndex / this.state.numberOfChairs));
+	            var y = 245 + Math.floor(245 * Math.sin(2 * Math.PI * chairIndex / this.state.numberOfChairs));
+
+	            return x + ',' + y;
+	        }
+	    }]);
+
+	    return Room;
+	}(_react.Component);
+
+	module.exports = Room;
 
 /***/ },
-/* 165 */
+/* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19886,104 +20063,485 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var React = __webpack_require__(1);
-	var Chair = __webpack_require__(166);
 
-	var Room = function (_React$Component) {
-	    _inherits(Room, _React$Component);
+	var Chair = function (_React$Component) {
+		_inherits(Chair, _React$Component);
 
-	    function Room(props) {
-	        _classCallCheck(this, Room);
+		function Chair(props) {
+			_classCallCheck(this, Chair);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Room).call(this, props));
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(Chair).call(this, props));
+		}
 
-	        _this.state = {
-	            initialNumberOfChairs: _this.props.initialNumberOfChairs
-	        };
-	        return _this;
-	    }
+		_createClass(Chair, [{
+			key: 'componentDidMount',
+			value: function componentDidMount() {}
+		}, {
+			key: 'render',
+			value: function render() {
+				var coords = this.props.chairPosCoord.split(',');
+				var style = {
+					top: coords[1],
+					right: coords[0]
+				};
 
-	    _createClass(Room, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            console.log('room mounted');
-	        }
-	    }, {
-	        key: 'determineChairPosition',
-	        value: function determineChairPosition(chairIndex) {
-	            // http://stackoverflow.com/questions/10152390/dynamically-arrange-some-elements-around-a-circle
-	            // (x + r cos(2kπ/n), y + r sin(2kπ/n))
-	            // x = x origin
-	            // y = y origin
-	            // r = radius/distance
-	            var x = 235 + Math.floor(235 * Math.cos(2 * Math.PI * chairIndex / this.props.initialNumberOfChairs));
-	            var y = 235 + Math.floor(235 * Math.sin(2 * Math.PI * chairIndex / this.props.initialNumberOfChairs));
+				return React.createElement(
+					'div',
+					{ className: 'chair', 'data-chair-number': this.props.chairNum, style: style },
+					this.props.name
+				);
+			}
+		}]);
 
-	            return x + ',' + y;
-	            //return 235+','+235
-	        }
-	    }, {
-	        key: 'generateChairItems',
-	        value: function generateChairItems() {
-	            var noOfItems = this.props.initialNumberOfChairs;
-	            var arr = [];
-
-	            for (var i = 1, len = noOfItems; i <= len; i++) {
-	                arr[i] = React.createElement(Chair, { className: 'Chair name', key: i, chairPosCoord: this.determineChairPosition(i) });
-	            }
-
-	            this.chairs = arr;
-
-	            return arr;
-	        }
-	    }, {
-	        key: 'startFiring',
-	        value: function startFiring() {}
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return React.createElement('div', { className: 'room' });
-	        }
-	    }]);
-
-	    return Room;
+		return Chair;
 	}(React.Component);
 
-	module.exports = Room;
+	;
+
+	module.exports = Chair;
+
+/***/ },
+/* 163 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var React = __webpack_require__(1);
+
+	var WallOfShame = function (_React$Component) {
+	  _inherits(WallOfShame, _React$Component);
+
+	  function WallOfShame(props) {
+	    _classCallCheck(this, WallOfShame);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(WallOfShame).call(this, props));
+	  }
+
+	  _createClass(WallOfShame, [{
+	    key: "componentDidMount",
+	    value: function componentDidMount() {}
+	  }, {
+	    key: "render",
+	    value: function render() {
+
+	      return React.createElement(
+	        "div",
+	        { className: "wall-of-shame" },
+	        React.createElement(
+	          "h2",
+	          null,
+	          "Wall of Shame"
+	        ),
+	        React.createElement(
+	          "ul",
+	          null,
+	          this.props.fireLog.map(function (log, index) {
+	            return React.createElement(
+	              "li",
+	              { key: index },
+	              log
+	            );
+	          })
+	        )
+	      );
+	    }
+	  }]);
+
+	  return WallOfShame;
+	}(React.Component);
+
+	;
+
+	module.exports = WallOfShame;
+
+/***/ },
+/* 164 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	module.exports = {
+
+	    numberOfChairs: 100,
+	    firingInterval: 300,
+	    chair: {
+	        height: 30,
+	        width: 30
+	    }
+	};
+
+/***/ },
+/* 165 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(166);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(168)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js?outputStyle=expandedsass?outputStyle=expanded!./main.scss", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js?outputStyle=expandedsass?outputStyle=expanded!./main.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
 
 /***/ },
 /* 166 */
 /***/ function(module, exports, __webpack_require__) {
 
+	exports = module.exports = __webpack_require__(167)();
+	// imports
+
+
+	// module
+	exports.push([module.id, ".gl-hide {\n  display: none !important; }\n\n/* apply a natural box layout model to all elements, but allowing components to change */\nhtml {\n  box-sizing: border-box; }\n\n*, *:before, *:after {\n  box-sizing: inherit; }\n\nhtml {\n  font-size: 62.5%;\n  /* 62.5% of 16px = 10px */\n  font-family: 'Lato', sans-serif; }\n\nh1, h2, h3 {\n  margin: 0 0 5px; }\n\n.chair {\n  position: absolute;\n  width: 10px;\n  height: 10px;\n  background: red;\n  box-shadow: 0 1px 0px 1px #BD0000;\n  font-size: 0.8rem;\n  line-height: 0.8rem; }\n  .chair:before {\n    content: attr(data-chair-number);\n    display: block;\n    color: #FFF;\n    position: absolute;\n    text-align: center;\n    top: 0;\n    height: 10px;\n    width: 10px; }\n\n.room {\n  position: relative;\n  width: 500px;\n  height: 500px; }\n\n.wall-of-shame {\n  position: absolute;\n  top: 0;\n  right: 0;\n  height: 100%;\n  width: 200px;\n  background: #F4F4F4;\n  padding: 5px;\n  overflow: scroll; }\n  .wall-of-shame ul {\n    margin: 0;\n    padding-left: 10px;\n    font-size: 0.8rem; }\n\n.settings-panel {\n  width: 300px;\n  height: 100px; }\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 167 */
+/***/ function(module, exports) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	// css base code, injected by the css-loader
+	module.exports = function() {
+		var list = [];
+
+		// return the list of modules as css string
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+
+		// import a list of modules into the list
+		list.i = function(modules, mediaQuery) {
+			if(typeof modules === "string")
+				modules = [[null, modules, ""]];
+			var alreadyImportedModules = {};
+			for(var i = 0; i < this.length; i++) {
+				var id = this[i][0];
+				if(typeof id === "number")
+					alreadyImportedModules[id] = true;
+			}
+			for(i = 0; i < modules.length; i++) {
+				var item = modules[i];
+				// skip already imported module
+				// this implementation is not 100% perfect for weird media query combinations
+				//  when a module is imported multiple times with different media queries.
+				//  I hope this will never occur (Hey this way we have smaller bundles)
+				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+					if(mediaQuery && !item[2]) {
+						item[2] = mediaQuery;
+					} else if(mediaQuery) {
+						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+					}
+					list.push(item);
+				}
+			}
+		};
+		return list;
+	};
+
+
+/***/ },
+/* 168 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	var stylesInDom = {},
+		memoize = function(fn) {
+			var memo;
+			return function () {
+				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+				return memo;
+			};
+		},
+		isOldIE = memoize(function() {
+			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
+		}),
+		getHeadElement = memoize(function () {
+			return document.head || document.getElementsByTagName("head")[0];
+		}),
+		singletonElement = null,
+		singletonCounter = 0,
+		styleElementsInsertedAtTop = [];
+
+	module.exports = function(list, options) {
+		if(false) {
+			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+		}
+
+		options = options || {};
+		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+		// tags it will allow on a page
+		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+
+		// By default, add <style> tags to the bottom of <head>.
+		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
+
+		var styles = listToStyles(list);
+		addStylesToDom(styles, options);
+
+		return function update(newList) {
+			var mayRemove = [];
+			for(var i = 0; i < styles.length; i++) {
+				var item = styles[i];
+				var domStyle = stylesInDom[item.id];
+				domStyle.refs--;
+				mayRemove.push(domStyle);
+			}
+			if(newList) {
+				var newStyles = listToStyles(newList);
+				addStylesToDom(newStyles, options);
+			}
+			for(var i = 0; i < mayRemove.length; i++) {
+				var domStyle = mayRemove[i];
+				if(domStyle.refs === 0) {
+					for(var j = 0; j < domStyle.parts.length; j++)
+						domStyle.parts[j]();
+					delete stylesInDom[domStyle.id];
+				}
+			}
+		};
+	}
+
+	function addStylesToDom(styles, options) {
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			if(domStyle) {
+				domStyle.refs++;
+				for(var j = 0; j < domStyle.parts.length; j++) {
+					domStyle.parts[j](item.parts[j]);
+				}
+				for(; j < item.parts.length; j++) {
+					domStyle.parts.push(addStyle(item.parts[j], options));
+				}
+			} else {
+				var parts = [];
+				for(var j = 0; j < item.parts.length; j++) {
+					parts.push(addStyle(item.parts[j], options));
+				}
+				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+			}
+		}
+	}
+
+	function listToStyles(list) {
+		var styles = [];
+		var newStyles = {};
+		for(var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var id = item[0];
+			var css = item[1];
+			var media = item[2];
+			var sourceMap = item[3];
+			var part = {css: css, media: media, sourceMap: sourceMap};
+			if(!newStyles[id])
+				styles.push(newStyles[id] = {id: id, parts: [part]});
+			else
+				newStyles[id].parts.push(part);
+		}
+		return styles;
+	}
+
+	function insertStyleElement(options, styleElement) {
+		var head = getHeadElement();
+		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+		if (options.insertAt === "top") {
+			if(!lastStyleElementInsertedAtTop) {
+				head.insertBefore(styleElement, head.firstChild);
+			} else if(lastStyleElementInsertedAtTop.nextSibling) {
+				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+			} else {
+				head.appendChild(styleElement);
+			}
+			styleElementsInsertedAtTop.push(styleElement);
+		} else if (options.insertAt === "bottom") {
+			head.appendChild(styleElement);
+		} else {
+			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+		}
+	}
+
+	function removeStyleElement(styleElement) {
+		styleElement.parentNode.removeChild(styleElement);
+		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
+		if(idx >= 0) {
+			styleElementsInsertedAtTop.splice(idx, 1);
+		}
+	}
+
+	function createStyleElement(options) {
+		var styleElement = document.createElement("style");
+		styleElement.type = "text/css";
+		insertStyleElement(options, styleElement);
+		return styleElement;
+	}
+
+	function createLinkElement(options) {
+		var linkElement = document.createElement("link");
+		linkElement.rel = "stylesheet";
+		insertStyleElement(options, linkElement);
+		return linkElement;
+	}
+
+	function addStyle(obj, options) {
+		var styleElement, update, remove;
+
+		if (options.singleton) {
+			var styleIndex = singletonCounter++;
+			styleElement = singletonElement || (singletonElement = createStyleElement(options));
+			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+		} else if(obj.sourceMap &&
+			typeof URL === "function" &&
+			typeof URL.createObjectURL === "function" &&
+			typeof URL.revokeObjectURL === "function" &&
+			typeof Blob === "function" &&
+			typeof btoa === "function") {
+			styleElement = createLinkElement(options);
+			update = updateLink.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+				if(styleElement.href)
+					URL.revokeObjectURL(styleElement.href);
+			};
+		} else {
+			styleElement = createStyleElement(options);
+			update = applyToTag.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+			};
+		}
+
+		update(obj);
+
+		return function updateStyle(newObj) {
+			if(newObj) {
+				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+					return;
+				update(obj = newObj);
+			} else {
+				remove();
+			}
+		};
+	}
+
+	var replaceText = (function () {
+		var textStore = [];
+
+		return function (index, replacement) {
+			textStore[index] = replacement;
+			return textStore.filter(Boolean).join('\n');
+		};
+	})();
+
+	function applyToSingletonTag(styleElement, index, remove, obj) {
+		var css = remove ? "" : obj.css;
+
+		if (styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = replaceText(index, css);
+		} else {
+			var cssNode = document.createTextNode(css);
+			var childNodes = styleElement.childNodes;
+			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+			if (childNodes.length) {
+				styleElement.insertBefore(cssNode, childNodes[index]);
+			} else {
+				styleElement.appendChild(cssNode);
+			}
+		}
+	}
+
+	function applyToTag(styleElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+		var sourceMap = obj.sourceMap;
+
+		if(media) {
+			styleElement.setAttribute("media", media)
+		}
+
+		if(styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = css;
+		} else {
+			while(styleElement.firstChild) {
+				styleElement.removeChild(styleElement.firstChild);
+			}
+			styleElement.appendChild(document.createTextNode(css));
+		}
+	}
+
+	function updateLink(linkElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+		var sourceMap = obj.sourceMap;
+
+		if(sourceMap) {
+			// http://stackoverflow.com/a/26603875
+			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+		}
+
+		var blob = new Blob([css], { type: "text/css" });
+
+		var oldSrc = linkElement.href;
+
+		linkElement.href = URL.createObjectURL(blob);
+
+		if(oldSrc)
+			URL.revokeObjectURL(oldSrc);
+	}
+
+
+/***/ },
+/* 169 */
+/***/ function(module, exports) {
+
 	'use strict';
 
-	var React = __webpack_require__(1);
+	module.exports = {
+	    spliceArray: function spliceArray(arr, index, number) {
 
-	var Chair = React.createClass({
-	  displayName: 'Chair',
-
-	  componentDidMount: function componentDidMount() {
-	    console.log('mount chair: ', this.props.chairPosCoord);
-	    console.log(ReactDOM.findDOMNode(this));
-	  },
-	  render: function render() {
-	    var coords = this.props.chairPosCoord.split(',');
-	    var style = {
-	      top: coords[1],
-	      right: coords[0]
-	    };
-	    console.log(coords);
-	    return React.createElement(
-	      'div',
-	      { style: style, className: 'chair', onMouseEnter: this.hovered },
-	      this.props.name
-	    );
-	  },
-	  hovered: function hovered() {
-	    console.log('hovered');
-	  }
-	});
-
-	module.exports = Chair;
+	        var arrOfVals = typeof arr === 'string' ? arr.split('') : arr;
+	        arrOfVals.splice(index, number);
+	        return arrOfVals;
+	    }
+	};
 
 /***/ }
 /******/ ]);

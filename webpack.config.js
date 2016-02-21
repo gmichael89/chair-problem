@@ -22,7 +22,8 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                loader: 'style!css!autoprefixer-loader?browsers=last 2 version!sass?outputStyle=expandedsass?outputStyle=expanded'
+                //loader: 'style!css!autoprefixer-loader?browsers=last 2 version!sass?outputStyle=expandedsass?outputStyle=expanded'
+                loader: 'style!css!sass?outputStyle=expandedsass?outputStyle=expanded'
             },
             {
                 test: /\.html$/,

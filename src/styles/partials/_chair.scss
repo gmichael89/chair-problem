@@ -1,0 +1,20 @@
+.chair {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: red;
+    box-shadow: 0 1px 0px 1px #BD0000;
+    font-size: 0.8rem;
+    line-height: 0.8rem;
+
+    &:before {
+        content: attr(data-chair-number);
+        display: block;
+        color: #FFF;
+        position: absolute;
+        text-align: center;
+        top: 0;
+        height: 10px;
+        width: 10px;
+    }
+}
