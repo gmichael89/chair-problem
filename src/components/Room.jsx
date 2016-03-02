@@ -65,13 +65,11 @@ class Room extends Component {
                 return;
             }
 
-            if (currentIndexToFire > chairsArr.length) {
+            if (currentIndexToFire >= chairsArr.length) {
                 currentIndexToFire = currentIndexToFire % chairsArr.length;
             }
 
             var firedChair = chairsArr.splice(currentIndexToFire, 1);
-            // debugger;
-            console.log('Firing: #', firedChair[0].key);
 
             fireLog.push('Firing chair: #' + firedChair[0].key);
 
@@ -83,6 +81,7 @@ class Room extends Component {
                 chairs: chairsArr,
                 fireLog
             });
+
         }).bind(this);
 
         setInterval(firingTimeout, this.props.config.firingInterval);

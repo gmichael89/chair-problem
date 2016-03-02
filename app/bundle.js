@@ -49,9 +49,9 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
 	var Viewport = __webpack_require__(159);
-	var config = __webpack_require__(164);
+	var config = __webpack_require__(165);
 
-	__webpack_require__(165);
+	__webpack_require__(166);
 
 	ReactDOM.render(React.createElement(Viewport, { config: config }), document.getElementById('App'));
 
@@ -19672,7 +19672,7 @@
 
 	var React = __webpack_require__(1);
 	var Settings = __webpack_require__(160);
-	var Room = __webpack_require__(161);
+	var Room = __webpack_require__(162);
 
 	var Viewport = function (_React$Component) {
 	    _inherits(Viewport, _React$Component);
@@ -19742,7 +19742,7 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var React = __webpack_require__(1);
-	var ArrayHelper = __webpack_require__(169);
+	var ArrayHelper = __webpack_require__(161);
 
 	var Settings = function (_React$Component) {
 		_inherits(Settings, _React$Component);
@@ -19895,6 +19895,21 @@
 
 /***/ },
 /* 161 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	module.exports = {
+	    spliceArray: function spliceArray(arr, index, number) {
+
+	        var arrOfVals = typeof arr === 'string' ? arr.split('') : arr;
+	        arrOfVals.splice(index, number);
+	        return arrOfVals;
+	    }
+	};
+
+/***/ },
+/* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19913,8 +19928,8 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var Chair = __webpack_require__(162);
-	var WallOfShame = __webpack_require__(163);
+	var Chair = __webpack_require__(163);
+	var WallOfShame = __webpack_require__(164);
 
 	var Room = function (_Component) {
 	    _inherits(Room, _Component);
@@ -20049,7 +20064,7 @@
 	module.exports = Room;
 
 /***/ },
-/* 162 */
+/* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20101,7 +20116,7 @@
 	module.exports = Chair;
 
 /***/ },
-/* 163 */
+/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -20163,7 +20178,7 @@
 	module.exports = WallOfShame;
 
 /***/ },
-/* 164 */
+/* 165 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -20179,16 +20194,16 @@
 	};
 
 /***/ },
-/* 165 */
+/* 166 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(166);
+	var content = __webpack_require__(167);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(168)(content, {});
+	var update = __webpack_require__(169)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -20205,10 +20220,10 @@
 	}
 
 /***/ },
-/* 166 */
+/* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(167)();
+	exports = module.exports = __webpack_require__(168)();
 	// imports
 
 
@@ -20219,7 +20234,7 @@
 
 
 /***/ },
-/* 167 */
+/* 168 */
 /***/ function(module, exports) {
 
 	/*
@@ -20275,7 +20290,7 @@
 
 
 /***/ },
-/* 168 */
+/* 169 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -20527,21 +20542,6 @@
 			URL.revokeObjectURL(oldSrc);
 	}
 
-
-/***/ },
-/* 169 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	module.exports = {
-	    spliceArray: function spliceArray(arr, index, number) {
-
-	        var arrOfVals = typeof arr === 'string' ? arr.split('') : arr;
-	        arrOfVals.splice(index, number);
-	        return arrOfVals;
-	    }
-	};
 
 /***/ }
 /******/ ]);

@@ -8,13 +8,12 @@ class Viewport extends React.Component {
         super();
 
         this.state = {
-            isFiringCommenced: false
+            isFiringCommenced: false,
+            configSettings: null
         };
     }
 
-    componentDidMount() {
-        //console.log('Viewport: ', this.props);//this.props.config);
-    }
+    componentDidMount() { }
 
     render() {
         var self = this;
@@ -23,10 +22,10 @@ class Viewport extends React.Component {
                 <Settings config={this.props.config} onBegin={this._settingsBegin.bind(this)} />
                 {
                     (function(){
+                        debugger;
                         if (self.state.isFiringCommenced) {
 
-                            // TODO: Need to pass in the settings from the Settings panel and not the config.
-                            return <Room config={self.props.config} />
+                            return <Room config={self.state.configSettings} />
                         }
                     }())
                 }
@@ -34,11 +33,12 @@ class Viewport extends React.Component {
         )
     }
 
-    _settingsBegin(){
-        console.log('_settingsBegin');
+    _settingsBegin(configSettings){
+
         this.setState({
-            isFiringCommenced: true
-        })
+            isFiringCommenced: true,
+            configSettings
+        });
     }
 };
 

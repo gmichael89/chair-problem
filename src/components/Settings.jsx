@@ -9,11 +9,14 @@ class Settings extends React.Component {
 		this.state = {
 			saved: false
 		};
+
+		this.configSettings = {
+			numberOfChairs: props.config.numberOfChairs,
+			firingInterval: props.config.firingInterval
+		};
     }
 
-	componentDidMount() {
-		//console.log(this);
-	}
+	componentDidMount() { }
 
 	render() {
 		return (
@@ -71,16 +74,13 @@ class Settings extends React.Component {
 
 	_handleNoOfChairsChange(e) {
 		var val = e.target.value;
+		
 		if (val.match(/^[0-9]*$/) != void 0) {
 
-			if (val < 10) {
-				this.setState(val);
+			if (val < 100) {
+				// this.setState(val);
+				this.configSettings.numberOfChairs = parseInt(val);
 			}
-			else {
-
-			}
-
-			console.log(val)
 		}
 	}
 
@@ -89,17 +89,16 @@ class Settings extends React.Component {
 		var val = e.target.value;
 
 		if (val.match(/^[0-9]*$/) != void 0) {
-			console.log(val)
-
-			this.setState({
-				value: val
-			});
+			this.configSettings.firingInterval = parseInt(val);
+			// this.setState({
+			// 	value: val
+			// });
 		}
 	}
 
 	_handleSetUp (e) {
 		//console.log('_handleSetUp: ', e);
-		this.props.onBegin();
+		this.props.onBegin(this.configSettings);
 	}
 
 };
