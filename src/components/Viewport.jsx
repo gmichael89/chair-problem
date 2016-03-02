@@ -22,7 +22,7 @@ class Viewport extends React.Component {
                 <Settings config={this.props.config} onBegin={this._settingsBegin.bind(this)} />
                 {
                     (function(){
-                        debugger;
+                        
                         if (self.state.isFiringCommenced) {
 
                             return <Room config={self.state.configSettings} />
